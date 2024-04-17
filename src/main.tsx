@@ -10,7 +10,7 @@ Devvit.addSettings([
 ]);
 
 Devvit.addTrigger({
-  events: ['PostSubmit', 'PostReport', 'PostUpdate', 'PostCreate', 'PostDelete', 'PostFlairUpdate', 'CommentDelete', 'CommentUpdate', 'CommentReport', 'ModAction'],
+  events: ['PostReport', 'PostUpdate', 'PostCreate', 'PostFlairUpdate', 'CommentUpdate', 'CommentReport'],
   onEvent: checkModQScannerSubmitEvent,
 });
 

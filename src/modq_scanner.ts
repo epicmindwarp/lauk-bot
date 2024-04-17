@@ -1,5 +1,4 @@
-import { PostSubmit, PostReport, PostUpdate, PostCreate, PostDelete, PostFlairUpdate,
-        CommentDelete, CommentUpdate, CommentReport, ModAction} from "@devvit/protos"
+import { PostReport, PostUpdate, PostCreate, PostFlairUpdate, CommentUpdate, CommentReport} from "@devvit/protos"
 
 import { SettingsFormField, TriggerContext } from "@devvit/public-api";
 
@@ -21,20 +20,17 @@ export const settingsForModQScanner: SettingsFormField = {
   ],
 };
 
-export async function checkModQScannerSubmitEvent (event: PostSubmit | PostReport | PostUpdate |
-                                                            PostCreate | PostDelete | PostFlairUpdate |
-                                                            CommentDelete | CommentUpdate | CommentReport |
-                                                            ModAction
+export async function checkModQScannerSubmitEvent (event: PostReport | PostUpdate | PostCreate 
+                                                        | PostFlairUpdate | CommentUpdate | CommentReport
                                                             , context: TriggerContext)
- {
-
-    console.log('\nTriggered by: ' + event.type.toString())
+{
 
     // Do not do anything if turned off
     if (!modQScannerSettingName.EnableFeature){
-        console.log('ModQ Actions Disabled.')
         return;
     }
+
+    console.log('\nTriggered by: ' + event.type.toString())
 
     const subreddit = await context.reddit.getSubredditById(context.subredditId);
 
