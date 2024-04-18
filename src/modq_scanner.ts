@@ -46,6 +46,8 @@ export async function checkModQScannerSubmitEvent (event: PostReport | PostUpdat
 
         const comment = modq_comments.children[i];
 
+        console.log('Comment Author: ' + comment.authorName)
+
         // Remove comment if the author is deleted
         if (!comment.authorName){
             comment.remove()
@@ -54,6 +56,8 @@ export async function checkModQScannerSubmitEvent (event: PostReport | PostUpdat
         else {            
             // Identify the main post
             let comment_parent_post = await context.reddit.getPostById(comment.postId)
+
+            console.log('Comment Post Author: ' + comment_parent_post.authorName)
 
             // If the post has the author deleted, delete the comment
             if (!comment_parent_post.authorName){
