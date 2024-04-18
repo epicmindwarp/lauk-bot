@@ -4,6 +4,7 @@ import { SettingsFormField, TriggerContext } from "@devvit/public-api";
 
 enum modQScannerSettingName {
     EnableFeature = "enablemodQScanner",
+    EnhancedLogging = "enhancedLogging",
 }
 
 export const settingsForModQScanner: SettingsFormField = {
@@ -17,6 +18,12 @@ export const settingsForModQScanner: SettingsFormField = {
             label: "Enable ModQueue Deleted Comment Clean-up",
             defaultValue: true,
         },
+        {
+            name: modQScannerSettingName.EnhancedLogging,
+            type: "boolean",
+            label: "Enhanced Logs",
+            defaultValue: false,
+        },
   ],
 };
 
@@ -29,6 +36,9 @@ export async function checkModQScannerSubmitEvent (event: PostReport | PostUpdat
     if (!modQScannerSettingName.EnableFeature){
         return;
     }
+
+    const settings = await context.settings.getAll();
+    const enhancedLogging = settings[modQScannerSettingName.EnhancedLogging] as boolean;
 
     console.log('\nTriggered by: ' + event.type.toString())
 
@@ -46,10 +56,12 @@ export async function checkModQScannerSubmitEvent (event: PostReport | PostUpdat
 
         const comment = modq_comments.children[i];
 
-        console.log('Comment Author: ' + comment.authorName)
+        if (enhancedLogging){
+            console.log('Comment Author: ' + comment.authorName)
+        }
 
         // Remove comment if the author is deleted
-        if (!comment.authorName){
+        if (comment.authorName === "[deleted]"){
             comment.remove()
             console.log('\tCleared orphaned comment ' + comment.permalink)
         }
@@ -57,10 +69,12 @@ export async function checkModQScannerSubmitEvent (event: PostReport | PostUpdat
             // Identify the main post
             let comment_parent_post = await context.reddit.getPostById(comment.postId)
 
-            console.log('Comment Post Author: ' + comment_parent_post.authorName)
+            if (enhancedLogging){
+                console.log('Comment Post Author: ' + comment_parent_post.authorName)
+            }
 
             // If the post has the author deleted, delete the comment
-            if (!comment_parent_post.authorName){
+            if (comment_parent_post.authorName === "[deleted]") {
                 comment.remove()
                 console.log('Cleared orphaned comment (post) ' + comment.permalink)
             }
